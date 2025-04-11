@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
   <head>
     <title>HTML onclick Event Attribute</title>
@@ -30,5 +30,142 @@
       Show Date
     </button>
     <p id="time"></p>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Countdown Timer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+      }
+      #timer {
+        font-size: 3em;
+        margin: 20px;
+      }
+      .input-group {
+        margin: 15px;
+      }
+      label {
+        margin-right: 10px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 1em;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Countdown Timer</h1>
+
+    <div class="input-group">
+      <label for="start-time">Start Time:</label>
+      <input type="datetime-local" id="start-time" />
+    </div>
+
+    <div class="input-group">
+      <label for="end-time">End Time:</label>
+      <input type="datetime-local" id="end-time" />
+    </div>
+
+    <button onclick="startCountdown()">Start Countdown</button>
+    <button onclick="stopCountdown()">Stop Countdown</button>
+
+    <div id="timer">00:00:00</div>
+
+    <script>
+      let countdownInterval;
+
+      function startCountdown() {
+        // Stop any existing countdown
+        stopCountdown();
+
+        // Get the input values
+        const startTimeInput = document.getElementById("start-time").value;
+        const endTimeInput = document.getElementById("end-time").value;
+
+        if (!startTimeInput || !endTimeInput) {
+          alert("Please enter both start and end times");
+          return;
+        }
+
+        const startTime = new Date(startTimeInput);
+        const endTime = new Date(endTimeInput);
+
+        if (endTime <= startTime) {
+          alert("End time must be after start time");
+          return;
+        }
+
+        // Calculate initial remaining time
+        const now = new Date();
+        let remainingTime;
+
+        if (now < startTime) {
+          // Countdown hasn't started yet
+          remainingTime = endTime - startTime;
+        } else if (now < endTime) {
+          // Countdown is in progress
+          remainingTime = endTime - now;
+        } else {
+          // Countdown has finished
+          remainingTime = 0;
+        }
+
+        // Update the timer immediately
+        updateTimerDisplay(remainingTime);
+
+        // Start the countdown interval
+        countdownInterval = setInterval(() => {
+          const now = new Date();
+
+          if (now < startTime) {
+            // Before start time - show full duration
+            remainingTime = endTime - startTime;
+          } else if (now < endTime) {
+            // During countdown
+            remainingTime = endTime - now;
+          } else {
+            // After end time - stop at zero
+            remainingTime = 0;
+            stopCountdown();
+          }
+
+          updateTimerDisplay(remainingTime);
+        }, 1000);
+      }
+
+      function stopCountdown() {
+        clearInterval(countdownInterval);
+      }
+
+      function updateTimerDisplay(milliseconds) {
+        const totalSeconds = Math.floor(milliseconds / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        const display =
+          String(hours).padStart(2, "0") +
+          ":" +
+          String(minutes).padStart(2, "0") +
+          ":" +
+          String(seconds).padStart(2, "0");
+
+        document.getElementById("timer").textContent = display;
+      }
+    </script>
   </body>
 </html>
